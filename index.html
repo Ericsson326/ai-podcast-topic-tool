@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Podcast 选题灵感台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="control-panel" aria-label="选题设置">
+        <div class="brand">
+          <span class="brand-mark">P</span>
+          <div>
+            <p class="eyebrow">IG 1分钟单人 Podcast</p>
+            <h1>选题灵感台</h1>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="topic">今天想讲什么</label>
+          <select id="topic">
+            <option value="个人成长">个人成长</option>
+            <option value="马来西亚年轻人生活">马来西亚年轻人生活</option>
+            <option value="AI与普通人">AI 与普通人</option>
+            <option value="工作与赚钱">工作与赚钱</option>
+            <option value="情绪与关系">情绪与关系</option>
+            <option value="自媒体与表达">自媒体与表达</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="audience">讲给谁听</label>
+          <select id="audience">
+            <option value="马来西亚年轻人">马来西亚年轻人</option>
+            <option value="普通上班族">普通上班族</option>
+            <option value="想做副业的人">想做副业的人</option>
+            <option value="想学 AI 的普通人">想学 AI 的普通人</option>
+            <option value="自媒体新手">自媒体新手</option>
+            <option value="正在迷茫的人">正在迷茫的人</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="regionStyle">参考风格</label>
+          <select id="regionStyle">
+            <option value="马来西亚式">马来西亚式</option>
+            <option value="台湾式">台湾式</option>
+            <option value="不指定">不指定</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="mood">内容感觉</label>
+          <select id="mood">
+            <option value="现实">现实</option>
+            <option value="温柔">温柔</option>
+            <option value="治愈">治愈</option>
+            <option value="犀利">犀利</option>
+            <option value="反思">反思</option>
+            <option value="鼓励">鼓励</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="angle">表达角度</label>
+          <select id="angle">
+            <option value="一个问题">一个问题</option>
+            <option value="一个故事">一个故事</option>
+            <option value="一个反常识观点">一个反常识观点</option>
+            <option value="一个生活观察">一个生活观察</option>
+            <option value="一个实用建议">一个实用建议</option>
+          </select>
+        </div>
+
+        <button class="primary-action" id="generateButton" type="button">
+          生成 3 个选题
+        </button>
+      </aside>
+
+      <section class="main-panel" aria-live="polite">
+        <nav class="tabs" aria-label="网站区域">
+          <button class="tab-button active" data-tab="generator" type="button">灵感</button>
+          <button class="tab-button" data-tab="library" type="button">选题库</button>
+          <button class="tab-button" data-tab="benchmarks" type="button">对标</button>
+          <button class="tab-button" data-tab="plan" type="button">计划</button>
+        </nav>
+
+        <section class="tab-panel active" id="generator">
+          <div class="hero-head">
+            <div>
+              <p class="eyebrow">REELS IDEA WALL</p>
+              <h2>像刷 IG 一样选 Podcast 题目</h2>
+              <p class="hero-copy">每个选题都是一张可拍摄卡片：Hook、脚本、Caption 一起看。</p>
+            </div>
+            <div class="status-pill" id="todayStatus">未选择</div>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <span>选题</span>
+            <span>展开资讯</span>
+            <span>复制拍摄</span>
+          </div>
+
+          <div class="idea-results" id="ideaResults"></div>
+        </section>
+
+        <section class="tab-panel" id="library">
+          <div class="topbar">
+            <div>
+              <p class="eyebrow">已收藏</p>
+              <h2>选题库</h2>
+            </div>
+            <span class="count-badge" id="savedCount">0</span>
+          </div>
+          <div class="filters">
+            <button class="filter-button active" data-filter="全部" type="button">全部</button>
+            <button class="filter-button" data-filter="马来西亚式" type="button">马来西亚式</button>
+            <button class="filter-button" data-filter="台湾式" type="button">台湾式</button>
+            <button class="filter-button" data-filter="已拍" type="button">已拍</button>
+          </div>
+          <div class="saved-list" id="savedList">
+            <p class="empty-state">喜欢的题目会先放在这里。</p>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="benchmarks">
+          <div class="topbar">
+            <div>
+              <p class="eyebrow">学习方向</p>
+              <h2>台湾 / 马来西亚对标</h2>
+            </div>
+          </div>
+          <div class="benchmark-grid">
+            <article>
+              <p class="label">台湾式</p>
+              <h3>学选题包装和节目人格</h3>
+              <p>参考敏迪选读、大人的 Small Talk、百灵果News、台湾通勤第一品牌。适合做职涯成长、心理关系、国际新闻转生活观点。</p>
+            </article>
+            <article>
+              <p class="label">马来西亚式</p>
+              <h3>学本地生活和华语受众</h3>
+              <p>参考 MELODY、GOXUAN、988 FM、CITYPlus、XUAN。适合做本地生活、副业、AI、年轻人选择、城市压力。</p>
+            </article>
+            <article>
+              <p class="label">可套用公式</p>
+              <h3>本地生活 + 普通人痛点</h3>
+              <p>为什么马来西亚年轻人越来越想做副业？在 KL 工作久了，最累的不是通勤，而是不确定感。</p>
+            </article>
+            <article>
+              <p class="label">可套用公式</p>
+              <h3>职场问题 + 成熟观点</h3>
+              <p>为什么越长大，越不能只靠努力？你不是没有目标，你只是被太多信息拉走了。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="plan">
+          <div class="topbar">
+            <div>
+              <p class="eyebrow">拍摄安排</p>
+              <h2>每日计划</h2>
+            </div>
+            <button class="ghost-action" id="markFilmedButton" type="button">标记已拍</button>
+          </div>
+          <div class="plan-card" id="todayPlan">
+            <p class="empty-state">还没有设置今天要拍的题目。</p>
+          </div>
+          <div class="weekly-list" id="weeklyList"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
