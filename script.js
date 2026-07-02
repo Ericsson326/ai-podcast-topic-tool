@@ -1,0 +1,469 @@
+const ideaBank = {
+  个人成长: [
+    {
+      title: "你不是没有开始，你只是把开始想得太大",
+      hook: "如果你一直想改变，却迟迟没有行动，可能不是你懒。",
+      point: "普通人最容易卡住的地方，是把第一步想成一整套人生计划。",
+      caption: "改变不一定要很大，先做一个小动作就够了。",
+    },
+    {
+      title: "普通人最该训练的不是自律，而是判断力",
+      hook: "很多人一提到变好，就只想到自律。",
+      point: "真正拉开差距的，是你能不能判断什么值得做、什么应该放下。",
+      caption: "自律之前，先学会判断。",
+    },
+    {
+      title: "你不是没有目标，你只是被太多声音拉走了",
+      hook: "现在最难的不是找资料，而是听见自己的声音。",
+      point: "信息越多，普通人越需要一个安静的判断空间。",
+      caption: "别让别人的节奏，变成你的人生方向。",
+    },
+  ],
+  马来西亚年轻人生活: [
+    {
+      title: "为什么很多马来西亚年轻人越来越想做副业",
+      hook: "你有没有发现，身边越来越多人开始讲副业？",
+      point: "很多人不是贪心，而是单一收入已经很难给人安全感。",
+      caption: "副业背后，其实是年轻人对安全感的寻找。",
+    },
+    {
+      title: "在马来西亚，选择圈子真的会影响命运",
+      hook: "有时候改变生活，不是先换工作，而是先换信息来源。",
+      point: "你接触的人和内容，会决定你看不看得到新的机会。",
+      caption: "环境不一定决定你，但会影响你能看到什么。",
+    },
+    {
+      title: "工资不够用时，先不要只怪自己不努力",
+      hook: "如果你很努力，还是觉得钱不够用，先别急着否定自己。",
+      point: "收入、城市成本、家庭责任和机会结构，都会影响一个人的压力。",
+      caption: "现实一点看问题，不是消极，是为了找到真正的出口。",
+    },
+  ],
+  AI与普通人: [
+    {
+      title: "普通人学 AI，第一步不是追工具",
+      hook: "AI 工具每天都在变，但普通人最该学的不是工具本身。",
+      point: "先学会提问、拆任务、判断结果，工具才会真的帮到你。",
+      caption: "会用 AI 的核心，是会把问题讲清楚。",
+    },
+    {
+      title: "AI 时代，真正重要的是把想法变成结果",
+      hook: "以后会用 AI 的人很多，但能做出结果的人还是少数。",
+      point: "AI 可以帮你加速，但方向和完成度还是要靠你自己决定。",
+      caption: "别只收藏工具，开始做出一个小结果。",
+    },
+    {
+      title: "你每天重复做的事，就是最适合先交给 AI 的事",
+      hook: "如果你不知道 AI 可以怎么用，先看你每天重复什么。",
+      point: "普通人用 AI，不需要一开始就很高级，先省下重复劳动就够了。",
+      caption: "AI 的第一步，可以很生活化。",
+    },
+  ],
+  工作与赚钱: [
+    {
+      title: "很多人忙了一整天，其实没有让自己更值钱",
+      hook: "忙不等于成长，更不等于变值钱。",
+      point: "工作里真正重要的，是你有没有累积可迁移、可交付的能力。",
+      caption: "别只记录自己有多忙，也要看自己留下了什么能力。",
+    },
+    {
+      title: "副业不是第二份工作，而是第二种能力",
+      hook: "如果副业只是让你更累，它可能不是好副业。",
+      point: "好的副业，应该帮你练出市场需要的能力，而不只是多打一份工。",
+      caption: "副业的重点不是忙，是能力升级。",
+    },
+    {
+      title: "想赚钱之前，先问自己能解决什么问题",
+      hook: "很多人想赚钱，但第一步就问错了。",
+      point: "市场付钱给你，不是因为你很努力，而是因为你解决了问题。",
+      caption: "赚钱的起点，是明确你能帮谁解决什么。",
+    },
+  ],
+  情绪与关系: [
+    {
+      title: "焦虑不是你太弱，是你同时想处理太多人生",
+      hook: "如果你最近很焦虑，可能不是你承受力太差。",
+      point: "当你同时想解决钱、工作、关系和未来，大脑自然会过载。",
+      caption: "焦虑时，先把问题拆小。",
+    },
+    {
+      title: "越长大，越要学会减少解释",
+      hook: "你有没有发现，越长大越不想解释自己？",
+      point: "不是你变冷漠了，而是你开始知道精力应该留给重要的人和事。",
+      caption: "有些理解，不需要靠解释换来。",
+    },
+    {
+      title: "很多关系变淡，不是因为不在乎",
+      hook: "有些关系慢慢变淡，其实不一定是谁错了。",
+      point: "人长大以后，节奏、压力和生活方向都会改变。",
+      caption: "关系有变化，不代表过去不珍贵。",
+    },
+  ],
+  自媒体与表达: [
+    {
+      title: "做内容最难的不是拍，而是敢开始",
+      hook: "很多人想做内容，但一直卡在第一条。",
+      point: "第一条内容不需要完美，它只需要让你开始进入表达状态。",
+      caption: "先开始，才会慢慢找到自己的声音。",
+    },
+    {
+      title: "普通人做内容，要先找到自己的观察",
+      hook: "如果你不知道拍什么，先不要急着模仿别人。",
+      point: "你日常生活里反复注意到的事情，就是最自然的内容来源。",
+      caption: "内容不是硬想出来的，是从观察里长出来的。",
+    },
+    {
+      title: "1分钟内容不要讲太满",
+      hook: "一分钟不是让你把所有想法都塞进去。",
+      point: "短内容最重要的是只讲清楚一个观点，让观众记得住。",
+      caption: "少讲一点，反而更容易被记住。",
+    },
+  ],
+};
+
+const regionNotes = {
+  马来西亚式: {
+    reference: "MELODY / GOXUAN / CITYPlus / XUAN",
+    lens: "把问题放回马来西亚年轻人的生活场景里。",
+  },
+  台湾式: {
+    reference: "敏迪选读 / 大人的 Small Talk / 百灵果News",
+    lens: "用成熟、清楚、有个人观点的方式包装选题。",
+  },
+  不指定: {
+    reference: "个人观察",
+    lens: "用最直接的方式讲清楚一个普通人会在意的问题。",
+  },
+};
+
+const outlineTemplates = {
+  一个问题: ["用一个观众会点头的问题开场", "讲出这个问题在生活里的具体样子", "给一个可以马上带走的判断"],
+  一个故事: ["先讲一个具体场景", "说出场景里的冲突或转折", "把故事收成一句现实观点"],
+  一个反常识观点: ["先说大众想法哪里不完整", "解释真正的问题是什么", "用一句容易记住的话收尾"],
+  一个生活观察: ["说出你最近观察到的现象", "连接到观众的日常压力", "给一个温和但清楚的提醒"],
+  一个实用建议: ["点出一个常见卡点", "给两个简单可做的动作", "提醒观众今天先做哪一步"],
+};
+
+const visualIdeas = [
+  "半身出镜，背景干净，字幕只放关键词。",
+  "用走路或通勤画面做背景，声音保持像聊天。",
+  "坐在桌前直视镜头，开头 3 秒直接讲问题。",
+  "用咖啡店、车内或书桌场景，增加生活感。",
+];
+
+let currentIdeas = [];
+let currentIdea = null;
+let activeFilter = "全部";
+let savedIdeas = JSON.parse(localStorage.getItem("podcastIdeas") || "[]");
+let todayIdea = JSON.parse(localStorage.getItem("todayPodcastIdea") || "null");
+
+const topicInput = document.querySelector("#topic");
+const audienceInput = document.querySelector("#audience");
+const regionInput = document.querySelector("#regionStyle");
+const moodInput = document.querySelector("#mood");
+const angleInput = document.querySelector("#angle");
+const ideaResults = document.querySelector("#ideaResults");
+const savedList = document.querySelector("#savedList");
+const savedCount = document.querySelector("#savedCount");
+const todayStatus = document.querySelector("#todayStatus");
+const todayPlan = document.querySelector("#todayPlan");
+const weeklyList = document.querySelector("#weeklyList");
+
+function pickRandom(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function shuffle(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function buildIdea(base, index) {
+  const topic = topicInput.value;
+  const audience = audienceInput.value;
+  const regionStyle = regionInput.value;
+  const mood = moodInput.value;
+  const angle = angleInput.value;
+  const outline = outlineTemplates[angle];
+  const note = regionNotes[regionStyle];
+  const hashtags = ["#一分钟Podcast", "#IGReels", `#${topic.replace(/\s/g, "")}`, "#马来西亚华语"];
+  const closing = `你觉得这件事最难的是开始，还是坚持？`;
+
+  return {
+    ...base,
+    id: `${Date.now()}-${index}`,
+    topic,
+    audience,
+    regionStyle,
+    mood,
+    angle,
+    outline,
+    hashtags,
+    visualIdea: pickRandom(visualIdeas),
+    referenceAccount: note.reference,
+    closingQuestion: closing,
+    script: buildScript(base, audience, mood, angle, note.lens),
+    createdAt: new Date().toISOString(),
+    filmed: false,
+  };
+}
+
+function buildScript(idea, audience, mood, angle, lens) {
+  return `${idea.hook} 我想把这个讲给${audience}听。${lens} 很多时候，我们以为问题是自己不够努力，但真正卡住我们的，可能是没有看清楚自己正在面对什么。用${angle}的方式来看，${idea.point} 所以今天不用急着改变全部，先抓住一个最小的动作，让自己重新开始。`;
+}
+
+function renderIdeas() {
+  const topic = topicInput.value;
+  currentIdeas = shuffle(ideaBank[topic]).slice(0, 3).map(buildIdea);
+  currentIdea = currentIdeas[0];
+  renderIdeaCards();
+}
+
+function renderIdeaCards() {
+  ideaResults.innerHTML = "";
+
+  currentIdeas.forEach((idea, index) => {
+    const card = document.createElement("button");
+    const active = currentIdea?.id === idea.id || currentIdea?.title === idea.title;
+    card.className = `idea-card ${active ? "active" : ""}`;
+    card.type = "button";
+    card.innerHTML = `
+      <span>选题 ${index + 1}</span>
+      <strong>${idea.title}</strong>
+      <small>${idea.regionStyle} / ${idea.mood} / ${idea.angle}</small>
+    `;
+    card.addEventListener("click", () => selectIdea(idea, card));
+    ideaResults.appendChild(card);
+
+    if (active) {
+      ideaResults.appendChild(createExpansion(idea));
+    }
+  });
+}
+
+function createExpansion(idea) {
+  const expansion = document.createElement("section");
+  expansion.className = "idea-expansion";
+  const coverClass = [
+    "expanded-cover",
+    idea.regionStyle === "台湾式" ? "dark" : "",
+    idea.topic === "个人成长" || idea.topic === "自媒体与表达" ? "green" : "",
+  ].join(" ");
+
+  expansion.innerHTML = `
+    <div class="expanded-reel">
+      <div class="${coverClass}">
+        <span>${idea.regionStyle} / ${idea.mood}</span>
+        <strong>${idea.hook}</strong>
+      </div>
+      <div class="expanded-title">
+        <h3>${idea.title}</h3>
+        <p>${idea.topic} / ${idea.angle}</p>
+      </div>
+    </div>
+    <div class="expanded-info">
+      <div class="script-header">
+        <p class="label">展开资讯</p>
+        <div class="button-row">
+          <button class="ghost-action" data-action="save" type="button">收藏</button>
+          <button class="ghost-action" data-action="today" type="button">设为今日</button>
+          <button class="ghost-action" data-action="copy" type="button">复制</button>
+        </div>
+      </div>
+      <p class="hook-line">${idea.hook}</p>
+      <div class="idea-grid">
+        <article>
+          <p class="label">核心观点</p>
+          <p>${idea.point}</p>
+        </article>
+        <article>
+          <p class="label">1分钟结构</p>
+          <ol>${idea.outline.map((item) => `<li>${item}</li>`).join("")}</ol>
+        </article>
+        <article>
+          <p class="label">IG Caption</p>
+          <p>${idea.caption} ${idea.hashtags.join(" ")}</p>
+        </article>
+        <article>
+          <p class="label">画面建议</p>
+          <p>${idea.visualIdea}</p>
+        </article>
+      </div>
+      <p class="script-text">${idea.script}</p>
+      <p class="closing-question">${idea.closingQuestion}</p>
+    </div>
+  `;
+
+  expansion.querySelector('[data-action="save"]').addEventListener("click", saveIdea);
+  expansion.querySelector('[data-action="today"]').addEventListener("click", setTodayIdea);
+  expansion.querySelector('[data-action="copy"]').addEventListener("click", copyScript);
+  return expansion;
+}
+
+function selectIdea(idea) {
+  const isSameIdea = currentIdea?.id === idea.id || currentIdea?.title === idea.title;
+  currentIdea = isSameIdea ? null : idea;
+  const existsInCurrent = currentIdeas.some((item) => item.id === idea.id || item.title === idea.title);
+  if (!existsInCurrent) {
+    currentIdeas = [idea, ...currentIdeas].slice(0, 3);
+  }
+  renderIdeaCards();
+}
+
+function saveIdea() {
+  if (!currentIdea) {
+    renderIdeas();
+  }
+
+  const exists = savedIdeas.some((idea) => idea.title === currentIdea.title);
+  if (!exists) {
+    savedIdeas.unshift(currentIdea);
+    persistSaved();
+  }
+}
+
+function persistSaved() {
+  localStorage.setItem("podcastIdeas", JSON.stringify(savedIdeas));
+  renderSaved();
+  renderWeekly();
+}
+
+function renderSaved() {
+  const filtered = savedIdeas.filter((idea) => {
+    if (activeFilter === "全部") return true;
+    if (activeFilter === "已拍") return idea.filmed;
+    return idea.regionStyle === activeFilter;
+  });
+
+  savedCount.textContent = savedIdeas.length;
+  savedList.innerHTML = "";
+
+  if (!filtered.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "这里还没有符合条件的选题。";
+    savedList.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach((idea) => {
+    const item = document.createElement("div");
+    item.className = "saved-item";
+    item.innerHTML = `
+      <div>
+        <span>${idea.topic} / ${idea.regionStyle}</span>
+        <strong>${idea.title}</strong>
+        <small>${idea.hook}</small>
+      </div>
+      <button class="mini-action" type="button">${idea.filmed ? "已拍" : "标记已拍"}</button>
+    `;
+    item.querySelector("button").addEventListener("click", () => {
+      idea.filmed = !idea.filmed;
+      persistSaved();
+    });
+    item.addEventListener("click", (event) => {
+      if (event.target.tagName === "BUTTON") return;
+      selectIdea(idea);
+      activateTab("generator");
+    });
+    savedList.appendChild(item);
+  });
+}
+
+function setTodayIdea() {
+  if (!currentIdea) {
+    renderIdeas();
+  }
+  todayIdea = currentIdea;
+  localStorage.setItem("todayPodcastIdea", JSON.stringify(todayIdea));
+  renderToday();
+}
+
+function renderToday() {
+  if (!todayIdea) {
+    todayStatus.textContent = "未选择";
+    todayPlan.innerHTML = `<p class="empty-state">还没有设置今天要拍的题目。</p>`;
+    return;
+  }
+
+  todayStatus.textContent = "今日已选";
+  todayPlan.innerHTML = `
+    <span>${todayIdea.topic} / ${todayIdea.regionStyle}</span>
+    <h3>${todayIdea.title}</h3>
+    <p>${todayIdea.hook}</p>
+    <p>${todayIdea.script}</p>
+  `;
+}
+
+function renderWeekly() {
+  weeklyList.innerHTML = "";
+  savedIdeas.slice(0, 5).forEach((idea, index) => {
+    const item = document.createElement("div");
+    item.className = "week-item";
+    item.innerHTML = `
+      <span>Day ${index + 1}</span>
+      <strong>${idea.title}</strong>
+      <small>${idea.filmed ? "已拍" : "未拍"}</small>
+    `;
+    weeklyList.appendChild(item);
+  });
+}
+
+async function copyScript() {
+  if (!currentIdea) return;
+  const text = [
+    currentIdea.title,
+    currentIdea.hook,
+    currentIdea.script,
+    `${currentIdea.caption} ${currentIdea.hashtags.join(" ")}`,
+    currentIdea.closingQuestion,
+  ].join("\n\n");
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    textArea.remove();
+  }
+}
+
+function activateTab(tabId) {
+  document.querySelectorAll(".tab-button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.tab === tabId);
+  });
+  document.querySelectorAll(".tab-panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.id === tabId);
+  });
+}
+
+document.querySelector("#generateButton").addEventListener("click", renderIdeas);
+document.querySelector("#markFilmedButton").addEventListener("click", () => {
+  if (!todayIdea) return;
+  const saved = savedIdeas.find((idea) => idea.title === todayIdea.title);
+  if (saved) {
+    saved.filmed = true;
+    persistSaved();
+  }
+});
+
+document.querySelectorAll(".tab-button").forEach((button) => {
+  button.addEventListener("click", () => activateTab(button.dataset.tab));
+});
+
+document.querySelectorAll(".filter-button").forEach((button) => {
+  button.addEventListener("click", () => {
+    activeFilter = button.dataset.filter;
+    document.querySelectorAll(".filter-button").forEach((item) => {
+      item.classList.toggle("active", item === button);
+    });
+    renderSaved();
+  });
+});
+
+renderIdeas();
+renderSaved();
+renderToday();
+renderWeekly();
