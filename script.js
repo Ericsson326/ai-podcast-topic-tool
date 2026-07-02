@@ -191,6 +191,9 @@ let currentIdea = null;
 let activeFilter = "全部";
 let savedIdeas = JSON.parse(localStorage.getItem("podcastIdeas") || "[]");
 let todayIdea = JSON.parse(localStorage.getItem("todayPodcastIdea") || "null");
+let plannedIdeas = JSON.parse(localStorage.getItem("podcastPlanCalendar") || "{}");
+let selectedPlanDate = formatDateKey(new Date());
+let calendarMonth = new Date();
 
 const topicInput = document.querySelector("#topic");
 const audienceInput = document.querySelector("#audience");
@@ -201,8 +204,13 @@ const ideaResults = document.querySelector("#ideaResults");
 const savedList = document.querySelector("#savedList");
 const savedCount = document.querySelector("#savedCount");
 const todayStatus = document.querySelector("#todayStatus");
-const todayPlan = document.querySelector("#todayPlan");
+const selectedPlan = document.querySelector("#selectedPlan");
 const weeklyList = document.querySelector("#weeklyList");
+const calendarGrid = document.querySelector("#calendarGrid");
+const calendarTitle = document.querySelector("#calendarTitle");
+const prevMonthButton = document.querySelector("#prevMonthButton");
+const nextMonthButton = document.querySelector("#nextMonthButton");
+const autoPlanButton = document.querySelector("#autoPlanButton");
 
 function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
@@ -210,6 +218,29 @@ function pickRandom(items) {
 
 function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
+}
+
+function formatDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getDateLabel(dateKey) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return `${month}月${day}日`;
+}
+
+function getDateFromKey(dateKey) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function addDays(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
 }
 
 function buildIdea(base, index) {
@@ -425,6 +456,7 @@ function persistSaved() {
   localStorage.setItem("podcastIdeas", JSON.stringify(savedIdeas));
   renderSaved();
   renderWeekly();
+  renderCalendar();
 }
 
 function renderSaved() {
@@ -475,37 +507,159 @@ function setTodayIdea() {
   }
   todayIdea = currentIdea;
   localStorage.setItem("todayPodcastIdea", JSON.stringify(todayIdea));
+  scheduleIdea(formatDateKey(new Date()), todayIdea);
   renderToday();
 }
 
 function renderToday() {
-  if (!todayIdea) {
+  const plannedIdea = plannedIdeas[selectedPlanDate];
+  todayIdea = plannedIdeas[formatDateKey(new Date())] || todayIdea;
+
+  if (!plannedIdea) {
     todayStatus.textContent = "未选择";
-    todayPlan.innerHTML = `<p class="empty-state">还没有设置今天要拍的题目。</p>`;
+    selectedPlan.innerHTML = `<p class="empty-state">${getDateLabel(selectedPlanDate)} 还没有安排内容。</p>`;
     return;
   }
 
-  todayStatus.textContent = "今日已选";
-  todayPlan.innerHTML = `
-    <span>${todayIdea.topic} / ${todayIdea.regionStyle}</span>
-    <h3>${todayIdea.title}</h3>
-    <p>${todayIdea.hook}</p>
-    <p>${todayIdea.script}</p>
+  todayStatus.textContent = plannedIdeas[formatDateKey(new Date())] ? "今日已选" : "未选择";
+  selectedPlan.innerHTML = `
+    <span>${getDateLabel(selectedPlanDate)} / ${plannedIdea.topic} / ${plannedIdea.regionStyle}</span>
+    <h3>${plannedIdea.title}</h3>
+    <p>${plannedIdea.hook}</p>
+    <p>${plannedIdea.script}</p>
+    <div class="plan-actions">
+      <button class="mini-action" data-plan-action="copy" type="button">复制脚本</button>
+      <button class="mini-action" data-plan-action="remove" type="button">移除当天</button>
+    </div>
   `;
+  selectedPlan.querySelector('[data-plan-action="copy"]').addEventListener("click", () => copyPlannedScript(plannedIdea));
+  selectedPlan.querySelector('[data-plan-action="remove"]').addEventListener("click", () => removePlannedIdea(selectedPlanDate));
 }
 
 function renderWeekly() {
   weeklyList.innerHTML = "";
-  savedIdeas.slice(0, 5).forEach((idea, index) => {
+  const nextPlans = Array.from({ length: 7 }, (_, index) => {
+    const dateKey = formatDateKey(addDays(new Date(), index));
+    return { dateKey, idea: plannedIdeas[dateKey] };
+  }).filter((item) => item.idea);
+
+  if (!nextPlans.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "未来 7 天还没有排内容。";
+    weeklyList.appendChild(empty);
+    return;
+  }
+
+  nextPlans.forEach(({ dateKey, idea }) => {
     const item = document.createElement("div");
     item.className = "week-item";
     item.innerHTML = `
-      <span>Day ${index + 1}</span>
+      <span>${getDateLabel(dateKey)}</span>
       <strong>${idea.title}</strong>
       <small>${idea.filmed ? "已拍" : "未拍"}</small>
     `;
+    item.addEventListener("click", () => {
+      selectedPlanDate = dateKey;
+      calendarMonth = getDateFromKey(dateKey);
+      renderCalendar();
+      renderToday();
+    });
     weeklyList.appendChild(item);
   });
+}
+
+function scheduleIdea(dateKey, idea) {
+  plannedIdeas[dateKey] = {
+    ...idea,
+    plannedDate: dateKey,
+  };
+  localStorage.setItem("podcastPlanCalendar", JSON.stringify(plannedIdeas));
+  selectedPlanDate = dateKey;
+  calendarMonth = getDateFromKey(dateKey);
+  renderCalendar();
+  renderWeekly();
+}
+
+function autoPlanWeek() {
+  if (!savedIdeas.length && !currentIdeas.length) {
+    renderIdeas();
+  }
+
+  const pool = [...savedIdeas, ...currentIdeas];
+  if (!pool.length) return;
+
+  Array.from({ length: 7 }, (_, index) => {
+    const dateKey = formatDateKey(addDays(new Date(), index));
+    plannedIdeas[dateKey] = {
+      ...pool[index % pool.length],
+      plannedDate: dateKey,
+      filmed: pool[index % pool.length].filmed || false,
+    };
+  });
+
+  selectedPlanDate = formatDateKey(new Date());
+  calendarMonth = new Date();
+  localStorage.setItem("podcastPlanCalendar", JSON.stringify(plannedIdeas));
+  todayIdea = plannedIdeas[selectedPlanDate];
+  localStorage.setItem("todayPodcastIdea", JSON.stringify(todayIdea));
+  renderCalendar();
+  renderToday();
+  renderWeekly();
+}
+
+function renderCalendar() {
+  calendarGrid.innerHTML = "";
+  const year = calendarMonth.getFullYear();
+  const month = calendarMonth.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const leadingBlanks = (firstDay.getDay() + 6) % 7;
+  const todayKey = formatDateKey(new Date());
+
+  calendarTitle.textContent = `${year}年 ${month + 1}月`;
+
+  Array.from({ length: leadingBlanks }).forEach(() => {
+    const empty = document.createElement("span");
+    empty.className = "calendar-day empty";
+    calendarGrid.appendChild(empty);
+  });
+
+  Array.from({ length: daysInMonth }, (_, index) => {
+    const day = index + 1;
+    const dateKey = formatDateKey(new Date(year, month, day));
+    const plannedIdea = plannedIdeas[dateKey];
+    const dayButton = document.createElement("button");
+    dayButton.type = "button";
+    dayButton.className = [
+      "calendar-day",
+      dateKey === todayKey ? "today" : "",
+      dateKey === selectedPlanDate ? "selected" : "",
+      plannedIdea ? "has-plan" : "",
+    ].join(" ");
+    dayButton.innerHTML = `
+      <strong>${day}</strong>
+      <span>${plannedIdea ? plannedIdea.title : "未安排"}</span>
+    `;
+    dayButton.addEventListener("click", () => {
+      selectedPlanDate = dateKey;
+      renderCalendar();
+      renderToday();
+    });
+    calendarGrid.appendChild(dayButton);
+  });
+}
+
+function removePlannedIdea(dateKey) {
+  delete plannedIdeas[dateKey];
+  localStorage.setItem("podcastPlanCalendar", JSON.stringify(plannedIdeas));
+  if (dateKey === formatDateKey(new Date())) {
+    todayIdea = null;
+    localStorage.removeItem("todayPodcastIdea");
+  }
+  renderCalendar();
+  renderToday();
+  renderWeekly();
 }
 
 async function copyScript() {
@@ -516,6 +670,27 @@ async function copyScript() {
     currentIdea.script,
     `${currentIdea.caption} ${currentIdea.hashtags.join(" ")}`,
     currentIdea.closingQuestion,
+  ].join("\n\n");
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    textArea.remove();
+  }
+}
+
+async function copyPlannedScript(idea) {
+  const text = [
+    idea.title,
+    idea.hook,
+    idea.script,
+    `${idea.caption} ${idea.hashtags.join(" ")}`,
+    idea.closingQuestion,
   ].join("\n\n");
 
   try {
@@ -541,12 +716,30 @@ function activateTab(tabId) {
 
 document.querySelector("#generateButton").addEventListener("click", renderIdeas);
 document.querySelector("#markFilmedButton").addEventListener("click", () => {
-  if (!todayIdea) return;
-  const saved = savedIdeas.find((idea) => idea.title === todayIdea.title);
+  const plannedIdea = plannedIdeas[selectedPlanDate];
+  if (!plannedIdea) return;
+  plannedIdea.filmed = true;
+  plannedIdeas[selectedPlanDate] = plannedIdea;
+  localStorage.setItem("podcastPlanCalendar", JSON.stringify(plannedIdeas));
+
+  const saved = savedIdeas.find((idea) => idea.title === plannedIdea.title);
   if (saved) {
     saved.filmed = true;
     persistSaved();
   }
+  renderCalendar();
+  renderToday();
+  renderWeekly();
+});
+
+autoPlanButton.addEventListener("click", autoPlanWeek);
+prevMonthButton.addEventListener("click", () => {
+  calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+  renderCalendar();
+});
+nextMonthButton.addEventListener("click", () => {
+  calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+  renderCalendar();
 });
 
 document.querySelectorAll(".tab-button").forEach((button) => {
@@ -565,5 +758,6 @@ document.querySelectorAll(".filter-button").forEach((button) => {
 
 renderIdeas();
 renderSaved();
+renderCalendar();
 renderToday();
 renderWeekly();

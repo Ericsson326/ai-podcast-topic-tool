@@ -161,10 +161,30 @@
               <p class="eyebrow">拍摄安排</p>
               <h2>每日计划</h2>
             </div>
-            <button class="ghost-action" id="markFilmedButton" type="button">标记已拍</button>
+            <div class="button-row">
+              <button class="ghost-action" id="autoPlanButton" type="button">自动排 7 天</button>
+              <button class="ghost-action" id="markFilmedButton" type="button">标记已拍</button>
+            </div>
           </div>
-          <div class="plan-card" id="todayPlan">
-            <p class="empty-state">还没有设置今天要拍的题目。</p>
+          <div class="calendar-shell">
+            <div class="calendar-head">
+              <button class="calendar-nav" id="prevMonthButton" type="button" aria-label="上个月">‹</button>
+              <strong id="calendarTitle">这个月</strong>
+              <button class="calendar-nav" id="nextMonthButton" type="button" aria-label="下个月">›</button>
+            </div>
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>一</span>
+              <span>二</span>
+              <span>三</span>
+              <span>四</span>
+              <span>五</span>
+              <span>六</span>
+              <span>日</span>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </div>
+          <div class="plan-card" id="selectedPlan">
+            <p class="empty-state">点一个日期，或把选题设为今日。</p>
           </div>
           <div class="weekly-list" id="weeklyList"></div>
         </section>
