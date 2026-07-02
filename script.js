@@ -125,14 +125,32 @@ const regionNotes = {
   马来西亚式: {
     reference: "MELODY / GOXUAN / CITYPlus / XUAN",
     lens: "把问题放回马来西亚年轻人的生活场景里。",
+    scene: "KL 通勤、薪水压力、家里期待、想做副业但又怕不稳定",
+    opening: "讲真的",
+    bridge: "这件事在马来西亚其实很 real",
+    phraseBank: ["讲真的", "很 real", "先不要想太复杂", "不要 paiseh", "慢慢来也是一种开始"],
+    hashtags: ["#马来西亚华语", "#KL生活", "#副业思考", "#普通人成长"],
+    closing: "你也有这种感觉吗？留言跟我讲一下。",
   },
   台湾式: {
     reference: "敏迪选读 / 大人的 Small Talk / 百灵果News",
     lens: "用成熟、清楚、有个人观点的方式包装选题。",
+    scene: "通勤路上、下班后的空档、和朋友聊天时突然意识到的生活问题",
+    opening: "老实说",
+    bridge: "这件事其实不是单纯努力或不努力的问题",
+    phraseBank: ["老实说", "你有没有发现", "这件事其实很日常", "先把问题看清楚", "不要急着否定自己"],
+    hashtags: ["#台湾Podcast", "#职涯成长", "#生活观察", "#自我整理"],
+    closing: "如果是你，你会怎么选择？可以留言跟我聊聊。",
   },
   不指定: {
     reference: "个人观察",
     lens: "用最直接的方式讲清楚一个普通人会在意的问题。",
+    scene: "一个普通人每天都会遇到的小压力",
+    opening: "你有没有发现",
+    bridge: "这件事背后其实有一个很简单的问题",
+    phraseBank: ["你有没有发现", "先不用急", "问题可能没有那么复杂", "从一个小动作开始"],
+    hashtags: ["#一分钟Podcast", "#个人成长", "#生活观察"],
+    closing: "你觉得这件事最难的是开始，还是坚持？",
   },
 };
 
@@ -150,6 +168,23 @@ const visualIdeas = [
   "坐在桌前直视镜头，开头 3 秒直接讲问题。",
   "用咖啡店、车内或书桌场景，增加生活感。",
 ];
+
+const regionVisualIdeas = {
+  马来西亚式: [
+    "可以在车里、MRT/LRT 附近、cafe 或 office 外面拍，画面要有一点本地生活感。",
+    "字幕可以保留一点中英夹杂，例如：很 real、不要 paiseh、先 start small。",
+    "语气像在跟朋友 mamak 聊天，不要太像正式演讲。",
+  ],
+  台湾式: [
+    "可以用通勤、书桌、咖啡店或夜晚房间灯光，营造 Podcast 聊天感。",
+    "字幕可以短一点，强调一句核心观点，不要塞太满。",
+    "语气放慢一点，像在把一个生活观察慢慢讲清楚。",
+  ],
+  不指定: [
+    "半身出镜，背景干净，字幕只放关键词。",
+    "开头 3 秒直接讲问题，不要先自我介绍。",
+  ],
+};
 
 let currentIdeas = [];
 let currentIdea = null;
@@ -185,12 +220,18 @@ function buildIdea(base, index) {
   const angle = angleInput.value;
   const outline = outlineTemplates[angle];
   const note = regionNotes[regionStyle];
-  const hashtags = ["#一分钟Podcast", "#IGReels", `#${topic.replace(/\s/g, "")}`, "#马来西亚华语"];
-  const closing = `你觉得这件事最难的是开始，还是坚持？`;
+  const hashtags = ["#一分钟Podcast", "#IGReels", `#${topic.replace(/\s/g, "")}`, ...note.hashtags];
+  const hook = buildOralHook(base, note, topic);
+  const point = buildLocalizedPoint(base, note, audience);
+  const caption = buildCaption(base, note, topic);
+  const visualIdea = buildVisualIdea(note, regionStyle);
 
   return {
     ...base,
     id: `${Date.now()}-${index}`,
+    hook,
+    point,
+    caption,
     topic,
     audience,
     regionStyle,
@@ -198,17 +239,64 @@ function buildIdea(base, index) {
     angle,
     outline,
     hashtags,
-    visualIdea: pickRandom(visualIdeas),
+    visualIdea,
     referenceAccount: note.reference,
-    closingQuestion: closing,
-    script: buildScript(base, audience, mood, angle, note.lens),
+    oralLine: buildOralLine(note),
+    localizedAngle: buildLocalizedAngle(note, topic),
+    closingQuestion: note.closing,
+    script: buildScript({ ...base, hook, point }, audience, mood, angle, note),
     createdAt: new Date().toISOString(),
     filmed: false,
   };
 }
 
-function buildScript(idea, audience, mood, angle, lens) {
-  return `${idea.hook} 我想把这个讲给${audience}听。${lens} 很多时候，我们以为问题是自己不够努力，但真正卡住我们的，可能是没有看清楚自己正在面对什么。用${angle}的方式来看，${idea.point} 所以今天不用急着改变全部，先抓住一个最小的动作，让自己重新开始。`;
+function buildOralHook(idea, note, topic) {
+  if (note.opening === "讲真的") {
+    return `${note.opening}，${idea.hook.replace("你有没有发现，", "").replace("如果你", "如果你在马来西亚")}`;
+  }
+  if (note.opening === "老实说") {
+    return `${note.opening}，${idea.hook}`;
+  }
+  return idea.hook;
+}
+
+function buildLocalizedPoint(idea, note, audience) {
+  return `${idea.point} 对${audience}来说，重点不是马上变厉害，而是先找到一个比较不消耗自己的开始方式。`;
+}
+
+function buildLocalizedAngle(note, topic) {
+  return `${note.bridge}。可以从「${note.scene}」切入，再拉回「${topic}」这个主题。`;
+}
+
+function buildCaption(idea, note, topic) {
+  if (note.opening === "讲真的") {
+    return `${note.opening}，${idea.caption} 这不是大道理，是很多马来西亚年轻人每天都在面对的现实。`;
+  }
+  if (note.opening === "老实说") {
+    return `${note.opening}，${idea.caption} 这集想聊的不是答案，而是我们怎么重新看待这件事。`;
+  }
+  return idea.caption;
+}
+
+function buildOralLine(note) {
+  return note.phraseBank.join(" / ");
+}
+
+function buildVisualIdea(note, regionStyle) {
+  const regionVisual = pickRandom(regionVisualIdeas[regionStyle] || regionVisualIdeas["不指定"]);
+  return `${regionVisual} ${pickRandom(visualIdeas)}`;
+}
+
+function buildScript(idea, audience, mood, angle, note) {
+  if (note.opening === "讲真的") {
+    return `${idea.hook} 我觉得这个很适合讲给${audience}听。因为很多时候，我们不是不努力，是每天都被工作、钱、家里期待，还有未来的不确定感拉来拉去。${note.bridge}。你想改变生活，但一想到要开始副业、学 AI、换圈子，就会觉得很大件事。可是 ${idea.point} 所以今天先不要想太远，先做一个小到不会有压力的动作。比如写下一个想法、问一个问题，或者先试拍一条 1 分钟内容。慢慢来，也是在开始。`;
+  }
+
+  if (note.opening === "老实说") {
+    return `${idea.hook} 我想把这个讲给${audience}听。${note.bridge}。很多时候，我们以为自己卡住，是因为不够自律、不够积极，但其实更深层的问题，是我们没有给自己一个可以整理思绪的空间。用${angle}来看，${idea.point} 所以这集我想说的是，先不要急着逼自己变得更好。你可以先问自己：我现在真正想处理的，是能力问题，还是选择问题？当问题被看清楚，下一步就会比较容易出现。`;
+  }
+
+  return `${idea.hook} 我想把这个讲给${audience}听。${note.lens} 很多时候，我们以为问题是自己不够努力，但真正卡住我们的，可能是没有看清楚自己正在面对什么。用${angle}的方式来看，${idea.point} 所以今天不用急着改变全部，先抓住一个最小的动作，让自己重新开始。`;
 }
 
 function renderIdeas() {
@@ -272,6 +360,14 @@ function createExpansion(idea) {
       <p class="hook-line">${idea.hook}</p>
       <div class="idea-grid">
         <article>
+          <p class="label">口语开场</p>
+          <p>${idea.hook}</p>
+        </article>
+        <article>
+          <p class="label">本地化角度</p>
+          <p>${idea.localizedAngle}</p>
+        </article>
+        <article>
           <p class="label">核心观点</p>
           <p>${idea.point}</p>
         </article>
@@ -286,6 +382,10 @@ function createExpansion(idea) {
         <article>
           <p class="label">画面建议</p>
           <p>${idea.visualIdea}</p>
+        </article>
+        <article>
+          <p class="label">可用口头禅</p>
+          <p>${idea.oralLine}</p>
         </article>
       </div>
       <p class="script-text">${idea.script}</p>
